@@ -1,0 +1,47 @@
+### Tests of association and non-parametric tests ###
+### 
+#################################################
+
+##entering the Binge data as matrix with correct row and column labels
+Binge <-as.table(rbind(c(1392,1748),c(3956,6723)))
+dimnames(Binge)<- list(binge = c("Yes","No"),gender = c("M", "F"))    
+
+## Chi-squared test
+chisq.test(Binge)
+
+#Fisher's exact test
+fisher.test(Binge)
+
+
+
+                
+## read from a CSV file BUT also provide the row names (1st column)
+vendors<-read.csv(file.choose(), header=TRUE, row.names=1)
+
+chisq.test(vendors)
+fisher.test(vendors)
+
+
+
+### non-parametric tests 
+
+##Import the SCH_ROLL_sample CSV file
+samples<-read.csv(file.choose(), header=TRUE) 
+
+ratio1 = samples[,1] #3 samples for ratio
+ratio2 = samples[,2]
+ratio3 = samples[,3]
+
+library(BSDA)  #to run sign.test command
+SIGN.test(ratio1,md=14.5,alternative = "greater")
+
+
+wilcox.test(ratio1,mu=14.5,alternative="greater")
+
+
+### two sample test - import SCH_ROLL_2 sample
+twosamples <-read.csv(file.choose(), header=TRUE) ##Import the SCH_ROLL_2sample CSV file
+AKL_ratio = twosamples[,1]
+WAI_ratio = twosamples[,2]
+
+wilcox.test(AKL_ratio,WAI_ratio,mu=0)
