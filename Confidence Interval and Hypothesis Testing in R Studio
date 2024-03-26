@@ -1,0 +1,87 @@
+### T-test and confidence interval illustration ###
+#################################################
+
+##Import the SCH_ROLL_sample CSV file
+samples<-read.csv(file.choose(), header=TRUE) 
+
+ratio1 = samples[,1] #3 samples for ratio
+ratio2 = samples[,2]
+ratio3 = samples[,3]
+
+roll1 = samples[,4] #3 samples for roll
+roll2 = samples[,5]
+roll3 = samples[,6]
+
+#Confidence intervals
+t.test(ratio1)
+t.test(ratio2)
+t.test(ratio3)
+
+t.test(ratio1, conf.level=0.9)
+
+## ONE sample t-test to test if mu=14.5 vs. mu>14,5 ##
+t.test(ratio1,alternative="greater",mu=14.5)
+power.t.test(n=30,delta=0.5,sd=sd(ratio1),type="one.sample",alternative="one.sided",strict=TRUE)
+
+
+
+
+## TWO sample t-test to test if mu_AKL = mu_WAI
+twosamples <-read.csv(file.choose(), header=TRUE) ##Import the SCH_ROLL_2sample CSV file
+AKL_ratio = twosamples[,1]
+WAI_ratio = twosamples[,2]
+
+t.test(AKL_ratio,WAI_ratio,alternative="two.sided",var.equal = TRUE)  #assuming equal variance
+t.test(AKL_ratio,WAI_ratio,alternative="two.sided")
+
+## F-test for variance
+var.test(AKL_ratio,WAI_ratio,alternative="two.sided")
+
+
+
+
+
+
+### DRP data analysis
+DRP <-read.csv(file.choose(), header=TRUE) ##Import the DRP CSV file
+Test <- DRP[,1]
+Control <- DRP[,2]
+
+var.test(Test, Control, alternative="two.sided")
+t.test(Control, Test, alternative="less",var.equal = TRUE)  #assuming equal variance
+
+## normality checks
+hist(Test)
+hist(Control)
+library(car)
+qqPlot(Control)
+qqPlot(Test)
+
+shapiro.test(Test)
+shapiro.test(Control)
+
+
+
+
+### paired t-test
+Moon <-read.csv(file.choose(), header=TRUE) ##Import the Mooneffect CSV file
+
+aggmoon = Moon [,2] ## aggravation score on moon days 
+aggother = Moon[,3] # other days
+diff = Moon[,4]  ##diff in aggravation score in column 4
+
+#one way to run paired t-test
+t.test(aggmoon, aggother, paired = TRUE, alternative="greater")
+#another way to run paired t-test - one sample on diff
+t.test(diff,alternative="greater",mu=0)
+
+
+## creating new variables for grouped data that is needed for Levene test in Car library
+library(car)
+
+DRP_grouped = c(Control,Test) # this groups the data into the first argument
+
+# the below code labels the data in the first argument, the length function avoids
+# the need for counting the number of rows in Control and Test groups
+label = factor(c(rep('C',length(Control)),rep('T', length(Test))))
+leveneTest(DRP_grouped,label)
